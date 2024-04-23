@@ -1,0 +1,246 @@
+with Study_IQ as (SELECT *,
+extract(year from "published_date") as year,to_Char(published_date,'month') as month_name,
+extract(month from "published_date") as month
+FROM "study_iq")
+
+,world_affair as (SELECT *,
+extract(year from "published_date") as year,to_Char(published_date,'month') as month_name,
+extract(month from "published_date") as month
+FROM "youtube_api")
+-- SELECT month_name,count(title)as Study_IQ
+-- FROM Study_IQ
+-- where year=2024
+-- group by month_name,month
+-- order by month asc
+-- SELECT month_name,count(title)as Study_IQ
+-- FROM world_affair
+-- where year=2024
+-- group by month_name,month
+-- order by month asc
+
+
+
+-- SELECT month_name,sum(views) 
+-- FROM Study_IQ
+-- where year= 2024
+-- group by month,month_name
+-- order by month
+
+-- Top 10 Long Videos 
+-- SELECT title, views,cast((views/1000000 )as float) as Views_in_Million
+-- from Study_IQ
+-- where  year=2024
+-- order by views desc
+-- limit 10
+
+
+-- Most Viewed Video of 2024
+-- SELECT title,views 
+-- from Study_IQ
+-- where year=2024
+-- order by views desc
+-- limit 1
+
+
+-- -- count of videos uploded every month
+-- SELECT month_name,count(title)
+-- FROM world_affair
+-- where year=2024
+-- group by month_name,month
+-- order by month asc;
+
+
+-- SELECT month_name,sum(views) 
+-- FROM world_affair
+-- where year= 2024
+-- group by month,month_name
+-- order by month;
+
+-- Top 10 Videos 
+-- SELECT title, views,published_date
+-- from world_affair
+-- where year=2024
+-- order by views desc,published_date 
+-- limit 10
+
+-- Most Viewed Video of 2024
+-- SELECT title,views 
+-- from world_affair
+-- where year=2024
+-- order by views desc
+-- limit 1
+
+-- ,si as (select month_name,count(title)as Study_IQ 
+-- 		from Study_IQ
+-- 		where year =2024 
+-- 		group by month_name,month
+-- 		order by month ),
+-- wa as (select month_name,count(title)as world_affair 
+-- 	   from world_affair
+-- 		where year =2024 
+-- 		group by month_name,month
+-- 		order by month)
+
+-- select * from si  join wa  on si.month_name=wa.month_name
+
+-- tab as (select month_name,sum(views)as Study_IQ 
+-- 		 from Study_IQ
+-- 		 where year =2024 
+-- 		 group by month_name,month
+-- 		 order by month ),
+-- tab2 as (select month_name,sum(views)as world_affair  
+-- 		 from world_affair
+-- 		 where year =2024 
+--          group by month_name,month
+--          order by month)
+
+-- select * from tab t join tab2 t2 on t.month_name=t2.month_name
+
+-- tab as (select month_name,sum(views)as Study_IQ 
+-- 		 from Study_IQ
+-- 		 where year = 2023 and month BETWEEN 9 AND 12
+-- 		 group by month_name,month
+-- 		 order by month ),
+-- tab2 as (select month_name,sum(views)as world_affair  
+-- 		 from world_affair
+-- 		where year = 2023 and month BETWEEN 9 AND 12
+--          group by month_name,month
+--          order by month)
+
+-- select * from tab t join tab2 t2 on t.month_name=t2.month_name
+
+-- tab as (select month_name,count(title)as Study_IQ 
+-- 		 from Study_IQ
+-- 		 where year = 2023 and month BETWEEN 9 AND 12
+-- 		 group by month_name,month
+-- 		 order by month ),
+-- tab2 as (select month_name,count(title)as world_affair  
+-- 		 from world_affair
+-- 		where year = 2023 and month BETWEEN 9 AND 12
+--          group by month_name,month
+--          order by month)
+
+-- select * from tab t join tab2 t2 on t.month_name=t2.month_name
+
+-- SELECT MONTH_NAME,ROUND(AVG(VIEWS),2) 
+-- FROM Study_IQ
+-- where year = 2023 and month BETWEEN 9 AND 12
+-- GROUP BY MONTH_NAME, MONTH
+-- ORDER BY MONTH
+
+-- SELECT MONTH_NAME,ROUND(AVG(VIEWS),2) 
+-- FROM world_affair
+-- where year = 2023 and month BETWEEN 9 AND 12
+-- GROUP BY MONTH_NAME, MONTH
+-- ORDER BY MONTH
+
+
+
+-- ,tab as (select month_name,sum(views)as Study_IQ 
+-- 		 from Study_IQ
+-- 		 where year = 2023  
+-- 		 group by month_name,month
+-- 		 order by month ),
+-- tab2 as (select month_name,sum(views)as world_affair  
+-- 		 from world_affair
+-- 		 where year = 2023  
+--          group by month_name,month
+--          order by month )
+
+-- select * from tab t join tab2 t2 on t.month_name=t2.month_name 
+-- select month_name,
+--        sum(likes) / count(*) as avg_likes_study_iq, 
+--        sum(comments) / count(*) as avg_comments_study_iq 
+-- from Study_IQ
+-- where year = 2024 
+-- group by month_name, month
+-- order by month
+
+
+select t.month_name,
+       t.total_likes as likes_study_iq,
+       t.total_comments as comments_study_iq,
+       t2.total_likes as likes_world_affair,
+       t2.total_comments as comments_world_affair,
+       -- Optional: Calculate engagement ratios (likes/comments per video) if needed
+       case when t.video_count = 0 then null else cast(t.total_likes as float) / cast(t.video_count as float) end as avg_likes_study_iq,  
+       case when t.video_count = 0 then null else cast(t.total_comments as float) / cast(t.video_count as float) end as avg_comments_study_iq,
+       case when t2.video_count = 0 then null else cast(t2.total_likes as float) / cast(t2.video_count as float) end as avg_likes_world_affair,
+       case when t2.video_count = 0 then null else cast(t2.total_comments as float) / cast(t2.video_count as float) end as avg_comments_world_affair
+from Study_IQ t
+join world_affair t2 on t.month_name = t2.month_name
+order by month;
+
+tital_count as (SELECT title,
+       CASE WHEN title LIKE '%War%' THEN 'War'
+            WHEN title LIKE '%NATO%' THEN 'NATO'
+            WHEN title LIKE '%Economy%' THEN 'Economy'
+            WHEN title LIKE '%Israel%' THEN 'Israel'
+            WHEN title LIKE '%Ukraine%' THEN 'Ukraine'
+            WHEN title LIKE '%Russia%' THEN 'Russia'
+			WHEN title LIKE '%India%' THEN 'India'
+			WHEN title LIKE '%Oil%' THEN 'Oil'
+			WHEN title LIKE '%USA%' THEN 'USA'
+			
+            ELSE 'Other'
+       END AS category,VIEWS,MONTH_NAME
+FROM world_affair
+where year =2024 or year =2023),
+
+title_2 as (SELECT title,
+       CASE WHEN title LIKE '%War%' THEN 'War'
+            WHEN title LIKE '%NATO%' THEN 'NATO'
+            WHEN title LIKE '%Economy%' THEN 'Economy'
+            WHEN title LIKE '%Israel%' THEN 'Israel'
+            WHEN title LIKE '%Ukraine%' THEN 'Ukraine'
+            WHEN title LIKE '%Russia%' THEN 'Russia'
+			WHEN title LIKE '%India%' THEN 'India'
+			WHEN title LIKE '%Oil%' THEN 'Oil'
+			WHEN title LIKE '%USA%' THEN 'USA'
+			
+            ELSE 'Other'
+       END AS category,VIEWS,MONTH_NAME
+FROM Study_IQ
+where year =2023 or year=2024),
+
+-- world_affair_title as (SELECT category, COUNT(TITLE) AS world_affair
+-- FROM tital_count
+-- WHERE category NOT LIKE '%Other%'
+-- GROUP BY category
+-- ),
+-- study_iq_title as (SELECT category, COUNT(TITLE) AS study_IQ
+-- FROM title_2
+-- WHERE category NOT LIKE '%Other%'
+-- GROUP BY category
+-- )
+-- ,
+-- SELECT *
+-- FROM world_affair_title W 
+-- FULL JOIN study_iq_title S 
+-- ON W.category=S.category
+
+-- TOPIC_VIEWS AS (SELECT category,SUM(VIEWS) AS world_affair
+-- FROM tital_count
+-- GROUP BY category
+-- ORDER BY world_affair DESC ),
+-- TOPIC_VIEWS2 AS (
+-- SELECT category,SUM(VIEWS) AS STUDY_IQ
+-- FROM title_2
+-- GROUP BY category
+-- ORDER BY STUDY_IQ DESC)
+
+-- SELECT * FROM TOPIC_VIEWS W JOIN TOPIC_VIEWS2 S ON S.category=W.category
+TOPIC_VIEWS AS (SELECT category,(SUM(VIEWS)/COUNT(TITLE)) AS world_affair
+FROM tital_count
+GROUP BY category
+ORDER BY world_affair DESC ),
+TOPIC_VIEWS2 AS (
+SELECT category,(SUM(VIEWS)/COUNT(TITLE)) AS STUDY_IQ
+FROM title_2
+GROUP BY category
+ORDER BY STUDY_IQ DESC)
+
+SELECT * 
+FROM TOPIC_VIEWS W 
+JOIN TOPIC_VIEWS2 S 
+ON S.category=W.category
